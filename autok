@@ -1,0 +1,47 @@
+1 feladat
+
+CREATE database autoberles default CHARACTER set utf8 COLLATE utf8_hungarian_ci;
+
+2 feladat
+
+CREATE TABLE berlok( id int(11) AUTO_INCREMENT PRIMARY KEY, nev varchar(100) not null, jogositvagy varchar(15) not null, telefonszam varchar(20) not null );
+
+3 feladat
+
+CREATE table autok( id int(11) AUTO_INCREMENT PRIMARY KEY, rendszam varchar(6) not null UNIQUE key, tipus varchar(100) not null, evjarat int(11), szin varchar(30) );
+
+4 feladat
+
+CREATE TABLE kolcsonzes( id int(11) AUTO_INCREMENT PRIMARY KEY, berloid int(11), autoid int(11), berletkezdete date not null, napokszama int(11), napidij int(11) );
+
+5 feladat 
+
+INSERT INTO `autok`(`rendszam`, `tipus`, `evjarat`, `szin`) VALUES ('ABC456','Ford Ka','2002','Pink');
+INSERT INTO `autok`(`rendszam`, `tipus`, `evjarat`, `szin`) VALUES ('ABC123','Volkswagen Golf','2011','Fehér');
+INSERT INTO `autok`(`rendszam`, `tipus`, `evjarat`, `szin`) VALUES ('ABC157','Ford Mondeo','2015','Fekete');
+INSERT INTO `autok`(`rendszam`, `tipus`, `evjarat`, `szin`) VALUES ('ABC448','Volkswagen Golf','2012','Kék');
+
+6 feladat 
+
+INSERT INTO `berlok`( `nev`, `jogositvagy`, `telefonszam`) VALUES ('Kandúr Károly','LR337157','06-41-334112');
+INSERT INTO `berlok`( `nev`, `jogositvagy`, `telefonszam`) VALUES ('Gipsz Jakab','VE445112','06-41-555223');
+
+7 feladat
+
+INSERT INTO `kolcsonzes`( `berloid`, `autoid`, `berletkezdete`, `napidij`) VALUES ((SELECT berlok.id FROM berlok WHERE berlok.nev = 'Kandúr Károly'), (SELECT autok.id FROM autok WHERE autok.rendszam = 'ABC157'),'2017-04-25',12500); 
+
+8 feladat
+
+INSERT INTO `kolcsonzes`( `berloid`, `autoid`, `berletkezdete`, `napidij`) VALUES ((SELECT berlok.id FROM berlok WHERE berlok.nev = 'Gipsz Jakab'),(SELECT autok.id FROM autok WHERE autok.rendszam = 'ABC123'),'2017-05-25',9999);
+
+9 feladat
+
+UPDATE `kolcsonzes` SET `napokszama`= 6 WHERE id = (SELECT id FROM berlok WHERE berlok.nev = 'Kandúr Károly');
+
+10 feladat
+
+SELECT berlok.nev, napokszama*napidij as bérletidíj FROM `kolcsonzes` INNER JOIN berlok ON kolcsonzes.berloid = berlok.id WHERE kolcsonzes.id= (SELECT id FROM berlok WHERE berlok.nev = 'Kandúr Károly');
+
+11 feladat
+
+SELECT berlok.nev, autok.rendszam FROM ((`kolcsonzes` INNER JOIN berlok on kolcsonzes.berloid = berlok.id)inner join autok on kolcsonzes.autoid = autok.id) WHERE napokszama = 0;
